@@ -51,7 +51,21 @@ A `Success` monad wraps up all exceptions in a `Failed` monad and a `Failed` mon
 
 A `Something` monad wraps up a nil result in a `Nothing` monad and a `Nothing` monad ignores all chained methods. This prevents `MissingMethod` errors from trying to be call a method on `nil`.
 
-### More to come...
+## Utils
+
+`send_to_value` and `send_to_monad` are utility methods that can be included from `Consequence::Utils`. They create procs that pass their arguments to the send method on the value and monad respectively.
+
+``` ruby
+include Consequence::Utils
+
+Monad[2] << send_to_value(:**, 3) # Monad[8]
+```
+
+To include into Object to be available within all objects:
+
+``` ruby
+require 'consequence/core_ext'
+```
 
 ## Installation
 

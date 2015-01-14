@@ -28,7 +28,7 @@ module Consequence
     end
 
     def inspect
-      "#{self.class}[#{value}]"
+      "#{self.class}[#{value.inspect}]"
     end
 
     private

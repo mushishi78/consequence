@@ -1,3 +1,5 @@
+require 'consequence/monad'
+
 module Consequence
   class Something < Monad
     def >>(proc)
