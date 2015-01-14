@@ -9,7 +9,7 @@ module Consequence
     end
 
     def type_check(*args)
-      ->(v) { raise TypeError unless args.include?(v.class) }
+      ->(v) { Failure[TypeError.new] unless args.include?(v.class) }
     end
   end
 end
