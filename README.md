@@ -60,7 +60,7 @@ A Success Monad wraps up all exceptions in a Failed Monad and a Failed Monad ign
 
 ### Option
 
-A Option Monad only applys method if it's value is not nil, otherwise it ignores them. This prevent MissingMethod errors from methods trying to be applied to nil.
+A Option Monad only applies a method if it's value is not nil, otherwise it ignores them. This prevent MissingMethod errors from methods trying to be applied to nil.
 
 ### Others to be implemented shortly.
 
