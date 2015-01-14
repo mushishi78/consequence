@@ -33,13 +33,13 @@ p @side_effect  # "144"
 
 ## Operations
 
-* `>>` - Chains a proc/lamda with the result being passed along. If the result is not a `Monad`, it is wrapped up in one.
+* `>>` - Chains a proc with the result being passed along. If the result is not a `Monad`, it is wrapped up in one.
 
-* `<<` - The supplied proc/lamda is applied with the result being ignored and the unchanged `Monad` is passed down the chain.
+* `<<` - The supplied proc is applied with the result being ignored and the unchanged `Monad` is passed down the chain.
 
-If the proc/lamda accepts one argument, it is passed only the `value` of the `Monad`. If it accepts two values, it is passed both the `value` and the `Monad`.
+If the proc accepts one argument, it is passed only the `value` of the `Monad`. If it accepts two values, it is passed both the `value` and the `Monad`.
 
-Before being called, the proc/lamda have their `#to_proc` method called. This allows a `Symbol` to be passed in, whose `#to_proc` method sends the symbol as a message to the value of the Monad.
+Before being called, the proc have their `#to_proc` method called. This allows a `Symbol` to be passed in, whose `#to_proc` method sends the symbol as a message to the value of the Monad.
 
 ## Types
 
