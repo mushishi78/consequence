@@ -2,53 +2,49 @@
 
 [![Gem Version](https://badge.fury.io/rb/consequence.svg)](http://badge.fury.io/rb/consequence)
 
-Monad implementation to be used with [contracts.ruby](https://github.com/egonSchiele/contracts.ruby)
+Simple monad implementation with clear and consistent syntax.
 
-## Example Usage
+## Usage
 
 ``` ruby
 require 'consequence'
 
-class HirePirate
-  include Consequence
-  alias_method :m, :method
+Foo = Class.new(Consequence::Monad)
+Bar = Class.new(Consequence::Monad)
 
-  def apply(applicant)
-    Success[applicant] >> m(:eye_patch_check) << m(:log) >> :sign_and_date
-  end
+compare   = ->(v, m) { m == Foo[0] ? Foo[1] : Bar[v] }
+transform = ->(v, m) { m == Foo[1] ? 10 : 3 }
+validate  = ->(v) { v > 4 ? Bar[v] : Foo[v] }
+increment = ->(v) { v + 1 }
 
-  private
+react = ->(v, m) { @side_effect = v ** 2 if m.is_a?(Bar) }
+log   = ->(v) { @side_effect = @side_effect.to_s }
 
-  Contract Applicant => Monad
-  def eye_patch_check(applicant)
-    applicant.working_eyes > 1 ? Failure['Too many eyes'] : Success[Pirate.new(applicant)]
-  end
+result = Foo[0] >>
+         compare >>   # Foo[1]
+         transform >> # Foo[10]
+         validate >>  # Bar[10]
+         increment >> # Bar[11]
+         :next << react << log
 
-  def log(pirate)
-    puts "#{pirate.name} has joined the crew"
-  end
-end
+p result        # Bar[12]
+p @side_effect  # "144"
 ```
 
 ## Monad Methods
 
 ### >>
 
-Chains a method with the result being passed down the chain.
+Chains a proc/lamda with the result being passed along. If the result is not a Monad,
+it is wrapped up in one.
 
-If the method has a contract that requires a Monad, then the method is passed the Monad, otherwise it is passed it's value.
+If the proc/lamda accepts one argument, it is passed only the value of the Monad. If it has two values, it is passed both the value and the Monad.
 
-If the method has a contract that returns a Monad, then that Monad is passed down the chain, otherwise the result of the method is taken as the value for a new Monad.
-
-If called with a Symbol instead of a method, it is sent as a message to the value, and the result is taken as the value for a new Monad.
+Before being called, the proc/lamda have their `#to_proc` method called. This allows a Symbol to be passed in, whose `#to_proc` method will create a proc the sends the symbol as a message to the value of the Monad.
 
 ### <<
 
-Method is applied with the result being ignored and the unchanged Monad is passed down the chain.
-
-If the method has a contract that requires a Monad, then the method is passed the Monad, otherwise it is passed it's value.
-
-If called with a Symbol instead of a method, it is sent as a message to the value.
+The supplied proc/lamda is applied with the result being ignored and the unchanged Monad is passed down the chain.
 
 ## Monad Types
 
@@ -56,56 +52,11 @@ If called with a Symbol instead of a method, it is sent as a message to the valu
 
 A Success Monad wraps up all exceptions in a Failed Monad and a Failed Monad ignores all chained methods. This allows all possible failures in a long process to be dealt with at the end.
 
-### Option
+### Something & Nothing
 
-A Option Monad only applies a method if it's value is not nil, otherwise it ignores them. This prevents MissingMethod errors from methods trying to be applied to nil.
+A Something Monad wraps up a nil result in a Nothing Monad and a Nothing Monad ignores all chained methods. This prevents MissingMethod errors from methods trying to be applied to nil.
 
-## Example Implementation of Left and Right
-
-``` ruby
-require 'consequence'
-
-class Crab
-  include Consequence
-  alias_method :m, :method
-
-  Contract Monad => Monad
-  def begin(direction = Left[0])
-    direction >> m(:turn) >> m(:move) << m(:log) >> m(:continue?)
-  end
-
-  private
-
-  Left = Class.new(Monad)
-  Right = Class.new(Monad)
-
-  Contract Left => Num
-  def move(monad)
-    monad.value + 5
-  end
-
-  Contract Right => Num
-  def move(monad)
-    monad.value - 5
-  end
-
-  Contract Num => Monad
-  def turn(value)
-    rand > 0.5 ? Left[value] : Right[value]
-  end
-
-  def log(value)
-    puts value
-  end
-
-  Contract Monad => Monad
-  def continue?(monad)
-    monad.value.abs > 25 ? monad : monad >> m(:begin)
-  end
-end
-
-Crab.new.begin
-```
+### More to come...
 
 ## Installation
 

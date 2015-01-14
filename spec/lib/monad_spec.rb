@@ -1,62 +1,45 @@
 module Consequence
   describe Monad do
-    let(:methods) { Methods.new }
+    before do
+      stub_const('Foo', Class.new(Monad))
+      stub_const('Bar', Class.new(Monad))
+    end
 
     describe '#>>' do
-      context 'for Monad => Monad method' do
-        it 'suplies and is returned a Monad' do
-          expect(Foo[0] >> methods.method(:compare)).to eq(Foo[1])
-        end
-      end
+      let(:compare)   { ->(v, m) { m == Foo[0] ? Foo[1] : Bar[v] } }
+      let(:transform) { ->(v, m) { m == Foo[1] ? 10 : 3 } }
+      let(:validate)  { ->(v) { v > 4 ? Bar[v] : Foo[v] } }
+      let(:increment) { ->(v) { v + 1 } }
 
-      context 'for Monad => Num method' do
-        it 'suplies a monad and wraps return value in a monad' do
-          expect(Foo[0] >> methods.method(:transform)).to eq(Foo[10])
-        end
+      it 'handles a Monad => Monad proc' do
+        expect(Foo[0] >> compare).to eq(Foo[1])
       end
-
-      context 'for Num => Monad method' do
-        it 'suplies a value and is returned a monad' do
-          expect(Foo[0] >> methods.method(:validate)).to eq(Bar[0])
-        end
+      it 'handles a Monad => Fixum proc' do
+        expect(Foo[1] >> transform).to eq(Foo[10])
       end
-
-      context 'for Num => Num method (with no contract)' do
-        it 'suplies a value and wraps return value in a monad' do
-          expect(Foo[0] >> methods.method(:increment)).to eq(Foo[1])
-        end
+      it 'handles a Fixum => Monad proc' do
+        expect(Foo[10] >> validate).to eq(Bar[10])
       end
-
-      context 'with a symbol' do
-        it 'sends the symbol to the value and wraps result in a monad' do
-          expect(Foo[-1] >> :abs).to eq(Foo[1])
-        end
+      it 'handles a Fixnum => Fixnum proc' do
+        expect(Bar[10] >> increment).to eq(Bar[11])
+      end
+      it 'handles a Symbol proc' do
+        expect(Bar[11] >> :next).to eq(Bar[12])
       end
     end
 
     describe '#<<' do
-      context 'for Any => nil method (with no contract)' do
-        it 'supplies a value and the value causes side effects but leaves monad unchanged' do
-          expect(Foo[0] << methods.method(:log)).to eq(Foo[0])
-          expect(methods.side_effect).to eq(1)
-        end
+      let(:react) { ->(v, m) { @side_effect = v ** 2 if m.is_a?(Bar) } }
+      let(:log)   { ->(v) { @side_effect = @side_effect.to_s } }
+
+      it 'handles a Monad => _ proc' do
+        expect(Bar[12] << react).to eq(Bar[12])
+        expect(@side_effect).to eq(144)
       end
 
-      context 'for either Foo => Num or Bar => String method' do
-        it 'uses supplied monad to pattern match and causes side effects' \
-           'but leaves monad unchanged' do
-          expect(Foo[0] << methods.method(:react)).to eq(Foo[0])
-          expect(methods.side_effect).to eq(0)
-
-          expect(Bar[1] << methods.method(:react)).to eq(Bar[1])
-          expect(methods.side_effect).to eq('Bar! 1')
-        end
-      end
-
-      context 'with a symbol' do
-        it 'sends the symbol to the value and leaves monad unchanged' do
-          expect(Foo[-1] << :abs).to eq(Foo[-1])
-        end
+      it 'handles a Fixnum => _ proc' do
+        expect(Bar[12] << react << log).to eq(Bar[12])
+        expect(@side_effect).to eq('144')
       end
     end
 
@@ -71,6 +54,25 @@ module Consequence
 
       context 'with other a different class' do
         it { expect(Foo[0] == Bar[0]).to be(false) }
+      end
+    end
+  end
+
+  describe NullMonad do
+    describe '#>>' do
+      let(:increment) { ->(v) { v + 1 } }
+
+      it 'ignores proc' do
+        expect(NullMonad[24] >> increment).to eq(NullMonad[24])
+      end
+    end
+
+    describe '#<<' do
+      let(:log)   { ->(v) { @side_effect = v ** 2 } }
+
+      it 'ignores proc' do
+        expect(NullMonad[12] << log).to eq(NullMonad[12])
+        expect(@side_effect).to eq(nil)
       end
     end
   end

@@ -6,10 +6,9 @@ Gem::Specification.new do |s|
   s.version      = version
   s.author       = 'Max White'
   s.email        = 'mushishi78@gmail.com'
-  s.summary      = 'Monad implementation to be used with contracts.ruby'
+  s.summary      = 'Simple monad implementation with clear and consistent syntax.'
   s.license      = 'MIT'
   s.files        = Dir['LICENSE.txt', 'README.md', 'lib/**/*']
   s.require_path = 'lib'
-  s.add_runtime_dependency 'contracts', '~> 0.4', '>= 0.4.0'
   s.add_development_dependency 'rspec', '~> 3.1', '>= 3.1.0'
 end

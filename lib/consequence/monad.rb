@@ -1,7 +1,5 @@
 module Consequence
   class Monad
-    include Contracts
-
     def self.[](value)
       new(value)
     end
@@ -12,58 +10,44 @@ module Consequence
 
     attr_reader :value
 
-    # >>
-    #########
-    Contract Symbol => Monad
-    define_method(:>>) { |symbol| wrap(vbind(symbol.to_proc)) }
+    def >>(proc)
+      wrap(bind(proc.to_proc))
+    end
 
-    Contract Func[Not[Monad] => Not[Monad]] => Monad
-    define_method(:>>) { |proc| wrap(vbind(proc)) }
-
-    Contract Func[Not[Monad] => Monad] => Monad
-    define_method(:>>) { |proc| vbind(proc) }
-
-    Contract Func[Monad => Monad] => Monad
-    define_method(:>>) { |proc| bind(proc) }
-
-    Contract Func[Monad => Not[Monad]] => Monad
-    define_method(:>>) { |proc| wrap(bind(proc)) }
-
-    # <<
-    #########
-    Contract Symbol => Monad
-    define_method(:<<) { |symbol| vbind(symbol.to_proc); self }
-
-    Contract Func[Not[Monad] => Any] => Monad
-    define_method(:<<) { |proc| vbind(proc); self }
-
-    Contract Func[Monad => Any] => Monad
-    define_method(:<<) { |proc| bind(proc); self }
+    def <<(proc)
+      bind(proc.to_proc)
+      self
+    end
 
     def ==(other)
       self.class == other.class && value == other.value
     end
 
     def to_s
-      "#{self.class}[#{value}]"
+      value.to_s
     end
 
     def inspect
-        to_s
+      "#{self.class}[#{value}]"
     end
 
     private
 
     def bind(proc)
-      proc.call(self)
+      proc.call(*args_for(proc))
     end
 
-    def vbind(proc)
-      proc.call(value)
+    def args_for(proc)
+      proc.arity.abs == 1 ? [value] : [value, self]
     end
 
     def wrap(value)
-      self.class[value]
+      value.is_a?(Monad) ? value : self.class[value]
     end
+  end
+
+  class NullMonad < Monad
+    def >>(_); self end
+    def <<(_); self end
   end
 end
