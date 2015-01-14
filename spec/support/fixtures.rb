@@ -25,7 +25,7 @@ class Methods
   end
 
   def log(v)
-    @side_effect = v
+    @side_effect = v + 1
   end
 
   Contract Foo => Num

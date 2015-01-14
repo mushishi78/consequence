@@ -38,7 +38,7 @@ module Consequence
       context 'for Any => nil method (with no contract)' do
         it 'supplies a value and the value causes side effects but leaves monad unchanged' do
           expect(Foo[0] << methods.method(:log)).to eq(Foo[0])
-          expect(methods.side_effect).to eq(0)
+          expect(methods.side_effect).to eq(1)
         end
       end
 

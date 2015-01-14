@@ -9,3 +9,4 @@ end
 require 'consequence/monad'
 require 'consequence/failure'
 require 'consequence/success'
+require 'consequence/option'

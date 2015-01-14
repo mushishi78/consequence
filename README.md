@@ -58,6 +58,10 @@ If called with a Symbol instead of a method, it is sent as a message to the valu
 
 A Success Monad wraps up all exceptions in a Failed Monad and a Failed Monad ignores all chained methods. This allows all possible failures in a long process to be dealt with at the end.
 
+### Option
+
+A Option Monad only applys method if it's value is not nil, otherwise it ignores them. This prevent MissingMethod errors from methods trying to be applied to nil.
+
 ### Others to be implemented shortly.
 
 ## Installation
