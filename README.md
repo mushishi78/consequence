@@ -64,34 +64,33 @@ A Option Monad only applies a method if it's value is not nil, otherwise it igno
 
 ``` ruby
 require 'consequence'
+include Consequence
 
-class Crab
-  include Consequence
+class Left < Monad
+  def <<(proc)
+    super >> :next
+  end
+end
+
+class Right < Monad
+  def <<(proc)
+    super >> :chop
+  end
+end
+
+class LetterChopper
   alias_method :m, :method
 
   Contract Monad => Monad
-  def begin(direction = Left[0])
-    direction >> m(:turn) >> m(:move) << m(:log) >> m(:continue?)
+  def begin(monad = Left['|-|*|-|*|-|'])
+    monad >> m(:pick) << m(:log) >> m(:continue?)
   end
 
   private
 
-  Left = Class.new(Monad)
-  Right = Class.new(Monad)
-
-  Contract Left => Num
-  def move(monad)
-    monad.value + 5
-  end
-
-  Contract Right => Num
-  def move(monad)
-    monad.value - 5
-  end
-
-  Contract Num => Monad
-  def turn(value)
-    rand > 0.5 ? Left[value] : Right[value]
+  Contract String => Monad
+  def pick(value)
+    rand > 0.1 ? Left[value] : Right[value]
   end
 
   def log(value)
@@ -100,11 +99,11 @@ class Crab
 
   Contract Monad => Monad
   def continue?(monad)
-    monad.value.abs > 25 ? monad : monad >> m(:begin)
+    monad.value.empty? ? monad : monad >> m(:begin)
   end
 end
 
-Crab.new.begin
+LetterChopper.new.begin
 ```
 
 ## Installation
