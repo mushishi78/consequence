@@ -47,6 +47,39 @@ Before being called, the proc have their `#to_proc` method called. This allows a
 
 A `Success` monad wraps up all exceptions in a `Failed` monad and a `Failed` monad ignores all chained methods. This allows all possible failures in a long process to be dealt with at the end.
 
+``` ruby
+require 'consequence'
+require 'consequence/core_ext/symbol'
+
+class CreateUser
+  include Consequence
+
+  def create(attributes)
+    @attributes = attributes
+    Success[self] << :build >> :validate >> :persist
+  end
+
+  private
+
+  def build
+    @user = User.new(@attributes)
+  end
+
+  def validate
+    validator = UserValidator.new(@user)
+    validator.valid? ? Success[self] : Failure[validator.errors]
+  end
+
+  def persist
+    @user.save
+  end
+end
+```
+
+If the `User#new` raises an exception, the `validate` and `persist` methods won't be called, and a `Failure` monad will be returned with the exception as it's `value`.
+
+If the `validator` finds the new user to be invalid, the `persist` method will not be called and a `Failure` monad will be returned with the errors as it's `value`.
+
 ### Something & Nothing
 
 A `Something` monad wraps up a nil result in a `Nothing` monad and a `Nothing` monad ignores all chained methods. This prevents `MissingMethod` errors from trying to be call a method on `nil`.
@@ -64,7 +97,7 @@ Monad[2] << send_to_value(:**, 3) # Monad[8]
 To include into Object to be available within all objects:
 
 ``` ruby
-require 'consequence/core_ext'
+require 'consequence/core_ext/utils'
 ```
 
 ## Installation

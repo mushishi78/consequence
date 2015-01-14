@@ -38,7 +38,7 @@ module Consequence
     end
 
     def args_for(proc)
-      proc.arity.abs == 1 ? [value] : [value, self]
+      [value, self][0, proc.arity.abs]
     end
 
     def wrap(value)
