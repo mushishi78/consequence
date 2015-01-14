@@ -38,9 +38,9 @@ p @side_effect  # "144"
 Chains a proc/lamda with the result being passed along. If the result is not a Monad,
 it is wrapped up in one.
 
-If the proc/lamda accepts one argument, it is passed only the value of the Monad. If it has two values, it is passed both the value and the Monad.
+If the proc/lamda accepts one argument, it is passed only the value of the Monad. If it accepts two values, it is passed both the value and the Monad.
 
-Before being called, the proc/lamda have their `#to_proc` method called. This allows a Symbol to be passed in, whose `#to_proc` method will create a proc the sends the symbol as a message to the value of the Monad.
+Before being called, the proc/lamda have their `#to_proc` method called. This allows a Symbol to be passed in, whose `#to_proc` method sends the symbol as a message to the value of the Monad.
 
 ### <<
 
@@ -54,7 +54,7 @@ A Success Monad wraps up all exceptions in a Failed Monad and a Failed Monad ign
 
 ### Something & Nothing
 
-A Something Monad wraps up a nil result in a Nothing Monad and a Nothing Monad ignores all chained methods. This prevents MissingMethod errors from methods trying to be applied to nil.
+A Something Monad wraps up a nil result in a Nothing Monad and a Nothing Monad ignores all chained methods. This prevents MissingMethod errors from trying to be call a method on nil.
 
 ### More to come...
 
