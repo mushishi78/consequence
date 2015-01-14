@@ -44,6 +44,14 @@ module Consequence
       self.class == other.class && value == other.value
     end
 
+    def to_s
+      "#{self.class}[#{value}]"
+    end
+
+    def inspect
+        to_s
+    end
+
     private
 
     def bind(proc)
