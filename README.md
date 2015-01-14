@@ -31,30 +31,25 @@ p result        # Bar[12]
 p @side_effect  # "144"
 ```
 
-## Monad Methods
+## Operations
 
-### >>
+* `>>` - Chains a proc/lamda with the result being passed along. If the result is not a `Monad`, it is wrapped up in one.
 
-Chains a proc/lamda with the result being passed along. If the result is not a Monad,
-it is wrapped up in one.
+* `<<` - The supplied proc/lamda is applied with the result being ignored and the unchanged `Monad` is passed down the chain.
 
-If the proc/lamda accepts one argument, it is passed only the value of the Monad. If it accepts two values, it is passed both the value and the Monad.
+If the proc/lamda accepts one argument, it is passed only the `value` of the `Monad`. If it accepts two values, it is passed both the `value` and the `Monad`.
 
-Before being called, the proc/lamda have their `#to_proc` method called. This allows a Symbol to be passed in, whose `#to_proc` method sends the symbol as a message to the value of the Monad.
+Before being called, the proc/lamda have their `#to_proc` method called. This allows a `Symbol` to be passed in, whose `#to_proc` method sends the symbol as a message to the value of the Monad.
 
-### <<
-
-The supplied proc/lamda is applied with the result being ignored and the unchanged Monad is passed down the chain.
-
-## Monad Types
+## Types
 
 ### Success & Failure
 
-A Success Monad wraps up all exceptions in a Failed Monad and a Failed Monad ignores all chained methods. This allows all possible failures in a long process to be dealt with at the end.
+A `Success` monad wraps up all exceptions in a `Failed` monad and a `Failed` monad ignores all chained methods. This allows all possible failures in a long process to be dealt with at the end.
 
 ### Something & Nothing
 
-A Something Monad wraps up a nil result in a Nothing Monad and a Nothing Monad ignores all chained methods. This prevents MissingMethod errors from trying to be call a method on nil.
+A `Something` monad wraps up a nil result in a `Nothing` monad and a `Nothing` monad ignores all chained methods. This prevents `MissingMethod` errors from trying to be call a method on `nil`.
 
 ### More to come...
 
