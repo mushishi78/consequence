@@ -14,9 +14,7 @@ class HirePirate
   alias_method :m, :method
 
   def apply(applicant)
-    Success[applicant] >> m(:eye_patch_check)
-                       << m(:log)
-                       >> :sign_and_date
+    Success[applicant] >> m(:eye_patch_check) << m(:log) >> :sign_and_date
   end
 
   private
@@ -62,7 +60,52 @@ A Success Monad wraps up all exceptions in a Failed Monad and a Failed Monad ign
 
 A Option Monad only applies a method if it's value is not nil, otherwise it ignores them. This prevents MissingMethod errors from methods trying to be applied to nil.
 
-### Others to be implemented shortly.
+## Example Implementation of Left and Right
+
+``` ruby
+require 'consequence'
+
+class Crab
+  include Consequence
+  alias_method :m, :method
+
+  Contract Monad => Monad
+  def begin(direction = Left[0])
+    direction >> m(:turn) >> m(:move) << m(:log) >> m(:continue?)
+  end
+
+  private
+
+  Left = Class.new(Monad)
+  Right = Class.new(Monad)
+
+  Contract Left => Num
+  def move(monad)
+    monad.value + 5
+  end
+
+  Contract Right => Num
+  def move(monad)
+    monad.value - 5
+  end
+
+  Contract Num => Monad
+  def turn(value)
+    rand > 0.5 ? Left[value] : Right[value]
+  end
+
+  def log(value)
+    puts value
+  end
+
+  Contract Monad => Monad
+  def continue?(monad)
+    monad.value.abs > 25 ? monad : monad >> m(:begin)
+  end
+end
+
+Crab.new.begin
+```
 
 ## Installation
 
