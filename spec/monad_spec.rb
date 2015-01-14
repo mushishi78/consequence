@@ -29,7 +29,7 @@ module Consequence
     end
 
     describe '#<<' do
-      let(:react) { ->(v, m) { @side_effect = v ** 2 if m.is_a?(Bar) } }
+      let(:react) { ->(v, m) { @side_effect = v**2 if m.is_a?(Bar) } }
       let(:log)   { ->(v) { @side_effect = @side_effect.to_s } }
 
       it 'handles a Monad => _ proc' do
@@ -68,7 +68,7 @@ module Consequence
     end
 
     describe '#<<' do
-      let(:log)   { ->(v) { @side_effect = v ** 2 } }
+      let(:log) { ->(v) { @side_effect = v**2 } }
 
       it 'ignores proc' do
         expect(NullMonad[12] << log).to eq(NullMonad[12])

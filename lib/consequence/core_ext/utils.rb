@@ -1,5 +1,5 @@
 require 'consequence/utils'
 
 class Object
-	include Consequence::Utils
+  include Consequence::Utils
 end
