@@ -1,5 +1,7 @@
 # Consequence
 
+[![Gem Version](https://badge.fury.io/rb/consequence.svg)](http://badge.fury.io/rb/consequence)
+
 Monad implementation to be used with [contracts.ruby](https://github.com/egonSchiele/contracts.ruby)
 
 ## Example Usage
