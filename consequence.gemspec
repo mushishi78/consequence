@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.version      = version
   s.author       = 'Max White'
   s.email        = 'mushishi78@gmail.com'
-  s.summary      = 'Monad implementation to used in with contracts.ruby'
+  s.summary      = 'Monad implementation to be used with contracts.ruby'
   s.license      = 'MIT'
   s.files        = Dir['LICENSE.txt', 'README.md', 'lib/**/*']
   s.require_path = 'lib'
