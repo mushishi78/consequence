@@ -188,6 +188,11 @@ Nothing[nil].nil? # true
 
 To find some examples and information about utils, [check out the wiki](https://github.com/mushishi78/consequence/wiki/Consequence) and feel free to contribute to it.
 
+## Inspirations
+
+* [Deterministic](https://github.com/pzol/deterministic)
+* [Kleisli](https://github.com/txus/kleisli)
+
 ## Installation
 
 Add this line to your application's Gemfile:
