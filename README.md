@@ -30,15 +30,13 @@ p process(4) # Foo[5]
 
 ## Operations
 
-# `>>` Right Shift
+<dl>
+  <dt> &gt;&gt; Right Shift </dt>
+  <dd>Chains a proc with the result being passed along. If the result is not a monad, it is wrapped up in one.</dd>
 
-Chains a proc with the result being passed along. If the result is not a monad, it is wrapped up in one.
-
-# `<<` Left Shift
-
-The supplied proc is applied with the result being ignored and the unchanged monad is passed down the chain.
-
----
+  <dt> &lt;&lt; Left Shift </dt>
+  <dd>The supplied proc is applied with the result being ignored and the unchanged monad is passed down the chain.</dd>
+</dl>
 
 If the proc accepts one argument, it is passed only the `value` of the monad. If it accepts two values, it is passed both the `value` and the monad.
 
@@ -46,35 +44,36 @@ Before being called, the proc have their `#to_proc` method called. This allows a
 
 ## Types
 
-# Success & Failure
+### Success & Failure
 
 A `Success` monad wraps up all exceptions in a `Failed` monad and a `Failed` monad ignores all chained methods. This allows all possible failures in a long process to be dealt with at the end.
 
 ``` ruby
 require 'consequence'
-require 'consequence/core_ext/symbol'
 
-class CreateUser
-  include Consequence
+module CreateUser
+  class << self
+    include Consequence
+    alias_method :m, :method
 
-  def create(attributes)
-    @attributes = attributes
-    Success[self] << :build >> :validate >> :persist
-  end
+    def create(attributes)
+      Success[attributes] >> m(:build) >> m(:validate) >> m(:persist)
+    end
 
-  private
+    private
 
-  def build
-    @user = User.new(@attributes)
-  end
+    def build(attributes)
+      User.new(attributes)
+    end
 
-  def validate
-    validator = UserValidator.new(@user)
-    validator.valid? ? Success[self] : Failure[validator.errors]
-  end
+    def validate(user)
+      validator = UserValidator.new(user)
+      validator.valid? ? Success[user] : Failure[validator.errors]
+    end
 
-  def persist
-    @user.save
+    def persist(user)
+      user.save
+    end
   end
 end
 ```
@@ -83,13 +82,13 @@ If the `User#new` raises an exception, the `validate` and `persist` methods won'
 
 If the `validator` finds the new user to be invalid, the `persist` method will not be called and a `Failure` monad will be returned with the errors as it's `value`.
 
-# Something & Nothing
+### Something & Nothing
 
 A `Something` monad wraps up a nil result in a `Nothing` monad and a `Nothing` monad ignores all chained methods. This prevents `MissingMethod` errors from trying to be call a method on `nil`.
 
----
-
 ## Utils
+
+### `send_to_value` and `send_to_monad`
 
 `send_to_value` and `send_to_monad` are utility methods that can be included from `Consequence::Utils`. They create procs that pass their arguments to the send method on the value and monad respectively.
 
@@ -104,6 +103,24 @@ To include into Object to be available within all objects:
 ``` ruby
 require 'consequence/core_ext/utils'
 ```
+
+### `Object#m`
+
+As a shorthand for the `Object#method` method, it can be useful to alias this to m, such as in the Success/Failure example. To do this for all objects:
+
+``` ruby
+require 'consequence/core_ext/m_alias'
+```
+
+### `Symbol#to_proc`
+
+`Symbol#to_proc` can't be used to call private methods. This is inconvenient if you want an object to wrap itself up and call it's oen private methods with symbols. To use that style of notation, you can add this:
+
+``` ruby
+require 'consequence/core_ext/private_symbol_proc'
+```
+
+Alternatively, you can use `object#method`.
 
 ## Installation
 
