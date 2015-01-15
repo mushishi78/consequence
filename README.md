@@ -7,8 +7,7 @@ Simple monad implementation with clear and consistent syntax.
 ## Usage
 
 A monad has a value that it is wrapped around. Its value can be anything: String, Module, Proc etc...
-
-It take it's value as its only argument and can be initialized using the element reference syntax:
+It takes its value as its only argument and can be initialized using the element reference syntax:
 
 ``` ruby
 require 'consequence'
@@ -23,7 +22,7 @@ Its value can be retrieved with the `#value` getter method.
 my_monad.value # 4
 ```
 
-To create new monad types, simply inherit from monad.
+To create new monad types, simply inherit from `Monad`.
 
 ``` ruby
 Foo = Class.new(Monad)
@@ -175,7 +174,7 @@ A `Something` monad wraps up a nil result in a `Nothing` monad:
 Something[[1, 3, 5]] >> ->(v) { v[4] } # Consequence::Nothing[nil]
 ```
 
-A `Nothing` monad is also a subclass of the `NullMonad` so all successive chained procs are ignored. This prevents `MissingMethod` errors from trying to be call a method on `nil`.
+A `Nothing` monad is also a subclass of the `NullMonad` so all successive chained procs are ignored. This prevents `MissingMethod` errors from trying to call a method on a `nil`.
 
 A `Nothing` responds positively to the `#nil?` method:
 
