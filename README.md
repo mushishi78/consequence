@@ -120,6 +120,26 @@ require 'consequence/core_ext/m_alias'
 require 'consequence/core_ext/private_symbol_proc'
 ```
 
+## Composition
+
+To write composition methods, it is possible to write #to_proc method for a monad like so:
+
+``` ruby
+class Partial < Consequence::Monad
+  def initialize(value)
+    value.is_a?(Proc) ? super(value.curry) : super
+  end
+
+  def to_proc
+    ->(fn) { fn.(value) }
+  end
+end
+
+m = ->(x, y, z) {x + y + z}
+
+Partial[m] >> Partial[1] >> Partial[4] >> Partial[9] # Partial[14]
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
