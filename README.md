@@ -38,7 +38,7 @@ p process(4) # Foo[5]
   <dd>The supplied proc is applied with the result being ignored and the unchanged monad is passed down the chain.</dd>
 </dl>
 
-If the proc accepts one argument, it is passed only the `value` of the monad. If it accepts two values, it is passed both the `value` and the monad.
+If the proc accepts one argument, it is passed only the `value` of the monad. If it accepts two arguments, it is passed both the `value` and the monad.
 
 Before being called, the proc have their `#to_proc` method called. This allows a `Symbol` to be passed in, whose `#to_proc` method sends the symbol as a message to the `value` of the monad.
 
