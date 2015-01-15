@@ -120,8 +120,6 @@ require 'consequence/core_ext/m_alias'
 require 'consequence/core_ext/private_symbol_proc'
 ```
 
-Alternatively, you can use `object#method`.
-
 ## Installation
 
 Add this line to your application's Gemfile:
