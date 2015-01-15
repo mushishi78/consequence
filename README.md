@@ -9,41 +9,44 @@ Simple monad implementation with clear and consistent syntax.
 ``` ruby
 require 'consequence'
 
+def process(i)
+  Foo[i] >> :next << log >> validate
+end
+
+def log
+  ->(v) { puts v }
+end
+
+def validate
+  ->(v, m) { m == Foo[5] ? m : Bar['Fail'] }
+end
+
 Foo = Class.new(Consequence::Monad)
 Bar = Class.new(Consequence::Monad)
 
-compare   = ->(v, m) { m == Foo[0] ? Foo[1] : Bar[v] }
-transform = ->(v, m) { m == Foo[1] ? 10 : 3 }
-validate  = ->(v) { v > 4 ? Bar[v] : Foo[v] }
-increment = ->(v) { v + 1 }
-
-react = ->(v, m) { @side_effect = v ** 2 if m.is_a?(Bar) }
-log   = ->(v) { @side_effect = @side_effect.to_s }
-
-result = Foo[0] >>
-         compare >>   # Foo[1]
-         transform >> # Foo[10]
-         validate >>  # Bar[10]
-         increment >> # Bar[11]
-         :next << react << log
-
-p result        # Bar[12]
-p @side_effect  # "144"
+p process(0) # Bar['Fail']
+p process(4) # Foo[5]
 ```
 
 ## Operations
 
-* `>>` - Chains a proc with the result being passed along. If the result is not a `Monad`, it is wrapped up in one.
+# `>>` Right Shift
 
-* `<<` - The supplied proc is applied with the result being ignored and the unchanged `Monad` is passed down the chain.
+Chains a proc with the result being passed along. If the result is not a monad, it is wrapped up in one.
 
-If the proc accepts one argument, it is passed only the `value` of the `Monad`. If it accepts two values, it is passed both the `value` and the `Monad`.
+# `<<` Left Shift
 
-Before being called, the proc have their `#to_proc` method called. This allows a `Symbol` to be passed in, whose `#to_proc` method sends the symbol as a message to the `value` of the `Monad`.
+The supplied proc is applied with the result being ignored and the unchanged monad is passed down the chain.
+
+---
+
+If the proc accepts one argument, it is passed only the `value` of the monad. If it accepts two values, it is passed both the `value` and the monad.
+
+Before being called, the proc have their `#to_proc` method called. This allows a `Symbol` to be passed in, whose `#to_proc` method sends the symbol as a message to the `value` of the monad.
 
 ## Types
 
-### Success & Failure
+# Success & Failure
 
 A `Success` monad wraps up all exceptions in a `Failed` monad and a `Failed` monad ignores all chained methods. This allows all possible failures in a long process to be dealt with at the end.
 
@@ -80,9 +83,11 @@ If the `User#new` raises an exception, the `validate` and `persist` methods won'
 
 If the `validator` finds the new user to be invalid, the `persist` method will not be called and a `Failure` monad will be returned with the errors as it's `value`.
 
-### Something & Nothing
+# Something & Nothing
 
 A `Something` monad wraps up a nil result in a `Nothing` monad and a `Nothing` monad ignores all chained methods. This prevents `MissingMethod` errors from trying to be call a method on `nil`.
+
+---
 
 ## Utils
 
