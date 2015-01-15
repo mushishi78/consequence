@@ -122,7 +122,7 @@ require 'consequence/core_ext/private_symbol_proc'
 
 ## Composition
 
-To write composition methods, it is possible to write #to_proc method for a monad like so:
+To write composition methods, it is possible to write `#to_proc` method for a monad like so:
 
 ``` ruby
 class Partial < Consequence::Monad
