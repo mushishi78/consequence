@@ -106,7 +106,7 @@ require 'consequence/core_ext/utils'
 
 ### `Object#m`
 
-As a shorthand for the `Object#method` method, it can be useful to alias this to m, such as in the Success/Failure example. To do this for all objects:
+As a shorthand for the `Object#method` method, it can be useful to alias this to `m`, such as in the Success/Failure example. To do this for all objects:
 
 ``` ruby
 require 'consequence/core_ext/m_alias'
@@ -114,7 +114,7 @@ require 'consequence/core_ext/m_alias'
 
 ### `Symbol#to_proc`
 
-`Symbol#to_proc` can't be used to call private methods. This is inconvenient if you want an object to wrap itself up and call it's oen private methods with symbols. To use that style of notation, you can add this:
+`Symbol#to_proc` can't be used to call private methods. This is inconvenient if you want an object to wrap itself up and call it's own private methods with symbols. To use that style of notation, you can add this:
 
 ``` ruby
 require 'consequence/core_ext/private_symbol_proc'
