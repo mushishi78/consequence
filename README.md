@@ -166,6 +166,8 @@ Failure[0].succeeded? # false
 Failure[0].failed? # true
 ```
 
+For an example, check out the [Success & Failure example](https://github.com/mushishi78/consequence/wiki/Success-&-Failure-Example) on the wiki.
+
 ### Something & Nothing
 
 A `Something` monad wraps up a nil result in a `Nothing` monad:
@@ -181,6 +183,10 @@ A `Nothing` responds positively to the `#nil?` method:
 ``` ruby
 Nothing[nil].nil? # true
 ```
+
+## Wiki
+
+To find some examples and information about utils, [check out the wiki](https://github.com/mushishi78/consequence/wiki/Consequence) and feel free to contribute to it.
 
 ## Installation
 
