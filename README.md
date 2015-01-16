@@ -196,9 +196,6 @@ Foo[[1, 4, 6]].map {|n| n + 1} # Foo[[2, 5, 7]]
 It delegates via the `>>` operation, so subclasses of the NullMonad will respond to delegated method calls, but still take no action:
 
 ``` ruby
-Something.include DelegatesToValue
-Nothing.include DelegatesToValue
-
 dangrous_hash = {user: {orders: {1 => {price: 3.99} } } }
 
 Something[dangrous_hash][:user][:orders][1][:price] # Consequence::Something[3.99]
