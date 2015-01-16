@@ -1,5 +1,3 @@
-require 'consequence/monad'
-
 module Consequence
   module DelegatesToValue
     def method_missing(method_name, *args, &b)
