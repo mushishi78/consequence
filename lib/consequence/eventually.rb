@@ -2,12 +2,16 @@ require 'consequence/monad'
 
 module Consequence
 	class Eventually < Monad
-		def initialize(proc)
-			super(->(value){ proc.(value) })
-		end
+	  def execute(proc)
+	    value.(proc)
+	  end
 
-		def >>(proc)
-			super(->(callback) { ->(value){ proc.(callback.(value)) } })
-		end
+	  def <<(_); self end
+
+	  private
+
+	  def bind(proc)
+	    ->(callback) { execute(proc.(callback)) }
+	  end
 	end
 end

@@ -184,6 +184,12 @@ A `Nothing` responds positively to the `#nil?` method:
 Nothing[nil].nil? # true
 ```
 
+### Eventually
+
+The `Eventually` monad hooks up the callbacks of a chain of methods that may be executed some time in the future. This is useful for dealing with asynochronous calls.
+
+For an example, check out the [Eventually example](https://github.com/mushishi78/consequence/wiki/Eventually-Example) on the wiki.
+
 ## DelegatesToValue
 
 `DelegatesToValue` is a module that can be included into Monad that adds a `#method_missing` method to delegate calls to its value:
@@ -204,12 +210,13 @@ Something[dangrous_hash][:user][:orders][2][:price] # Consequence::Nothing[nil]
 
 ## Wiki
 
-To find some examples and information about utils, [check out the wiki](https://github.com/mushishi78/consequence/wiki/Consequence) and feel free to contribute to it.
+To find some examples and information about utils, [check out the wiki](https://github.com/mushishi78/consequence/wiki) and feel free to contribute to it.
 
 ## Inspirations
 
 * [Deterministic](https://github.com/pzol/deterministic)
 * [Kleisli](https://github.com/txus/kleisli)
+* [Refactoring Ruby with Monads](https://www.youtube.com/watch?v=J1jYlPtkrqQ&feature=youtu.be&a)
 
 ## Installation
 
