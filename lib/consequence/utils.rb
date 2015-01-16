@@ -1,5 +1,7 @@
 module Consequence
   module Utils
+  	alias_method :m, :method
+
     def send_to_value(*args)
       ->(v) { v.send(*args) }
     end

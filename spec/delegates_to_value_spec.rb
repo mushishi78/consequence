@@ -3,8 +3,8 @@ module Consequence
     before do
       stub_const('Foo', Class.new(Monad))
       stub_const('Bar', Class.new(NullMonad))
-      Foo.send(:include, DelegatesToValue)
-      Bar.send(:include, DelegatesToValue)
+      Foo.include DelegatesToValue
+      Bar.include DelegatesToValue
     end
 
     describe '#method_missing' do
