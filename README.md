@@ -1,5 +1,7 @@
 # Consequence
 
+[![Build Status](https://travis-ci.org/mushishi78/consequence.svg?branch=master)](https://travis-ci.org/mushishi78/consequence)
+
 [![Gem Version](https://badge.fury.io/rb/consequence.svg)](http://badge.fury.io/rb/consequence)
 
 Simple monad implementation with clear and consistent syntax.
