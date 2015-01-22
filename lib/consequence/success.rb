@@ -2,13 +2,13 @@ require 'consequence/monad'
 
 module Consequence
   class Success < Monad
-    def >>(proc)
+    def >>(obj)
       super
     rescue => err
       Failure[err]
     end
 
-    def <<(proc)
+    def <<(obj)
       super
     rescue => err
       Failure[err]

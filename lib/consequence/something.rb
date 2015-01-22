@@ -5,7 +5,7 @@ module Consequence
   class Something < Monad
     include DelegatesToValue
 
-    def >>(proc)
+    def >>(obj)
       result = super
       result.value.nil? ? Nothing[nil] : result
     end

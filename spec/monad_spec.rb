@@ -10,6 +10,7 @@ module Consequence
       let(:transform) { ->(v, m) { m == Foo[1] ? 10 : 3 } }
       let(:validate)  { ->(v) { v > 4 ? Bar[v] : Foo[v] } }
       let(:increment) { ->(v) { v + 1 } }
+      let(:module_example) { Module.new { def self.call(v); v / 4 end } }
 
       it 'handles a Monad => Monad proc' do
         expect(Foo[0] >> compare).to eq(Foo[1])
@@ -25,6 +26,9 @@ module Consequence
       end
       it 'handles a Symbol proc' do
         expect(Bar[11] >> :next).to eq(Bar[12])
+      end
+      it 'handles objects' do
+        expect(Bar[12] >> module_example).to eq(Bar[3])
       end
     end
 

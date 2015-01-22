@@ -10,13 +10,13 @@ module Consequence
 
     attr_reader :value
 
-    def >>(proc)
-      proc = proc.to_proc if proc.respond_to?(:to_proc)
-      wrap(bind(proc))
+    def >>(obj)
+      obj = obj.to_proc if obj.respond_to?(:to_proc)
+      wrap(bind(obj))
     end
 
-    def <<(proc)
-      bind(proc.to_proc)
+    def <<(obj)
+      bind(obj.to_proc)
       self
     end
 
@@ -34,12 +34,17 @@ module Consequence
 
     private
 
-    def bind(proc)
-      proc.call(*args_for(proc))
+    def bind(obj)
+      obj.call(*args_for(obj))
     end
 
-    def args_for(proc)
-      [value, self][0, proc.arity.abs]
+    def args_for(obj)
+      [value, self][0, arity(obj)]
+    end
+
+    def arity(obj)
+      method = obj.respond_to?(:arity) ? obj : obj.method(:call)
+      method.arity.abs
     end
 
     def wrap(value)
