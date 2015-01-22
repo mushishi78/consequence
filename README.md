@@ -42,7 +42,7 @@ Foo[0] == Foo[0] # true
 
 Monads have two main operations `>>` and `<<`.
 
-Both take a proc for their only argument. The supplied proc can take 0-2 arguments and the monad will match them, even if it's a lamda or method object with arity checking.
+Both take an object with a `#call` method, such as a proc, for their only argument. The `#call` method can take 0-2 arguments and the monad will match them, even if it's a lamda or method object with arity checking.
 
 It's first argument will be passed the monads value:
 
@@ -62,13 +62,13 @@ Foo[0] << ->(v, m) { puts v if m.is_a?(Foo) }
 
 The `>>` operation may be variously thought of as the 'map', 'bind' or 'join' operations, but has been left unnamed to avoid any specific connotations.
 
-It takes the result of the proc given to it and passes it on:
+It takes the result of the argument's `#call` method and passes it on:
 
 ``` ruby
 Foo[0] >> ->(v) { Bar[v] } # Bar[0]
 ```
 
-If it return's a result that is not a monad, it is wrapped up in one so the chain can continue:
+If the returned result that is not a monad, it is wrapped up in one so the chain can continue:
 
 ``` ruby
 Foo[0] >> ->(v) { v + 1 } # Foo[1]
@@ -78,7 +78,7 @@ Foo[0] >> ->(v) { v + 1 } # Foo[1]
 
 The `<<` operation may be thought of as the 'pipe' operation.
 
-It calls the proc given to it, but ignores it's return value:
+It calls the argument's `#call` method, but ignores the return value:
 
 ``` ruby
 Foo[0] << ->(v) { v + 1 } # Foo[0]
@@ -92,28 +92,6 @@ puts @side_effect
 # $ 1
 ```
 
-### `#to_proc`
-
-Before either operation calls a proc, the `#to_proc` method is called on it. This can be useful if the operation is given an object that is no a proc, but has a `#to_proc` method that returns one.
-
-A good example of this is the Symbol object, whose `#to_proc` method supplies a proc that sends the symbol as a message to its first argument. In this case this means calling that method on the value:
-
-``` ruby
-Foo[[1, 4, 7]] >> :pop # Foo[7]
-```
-
-This also can be used to make a composition syntax, by writing a `#to_proc` method for a monad:
-
-``` ruby
-class Add < Monad
-  def to_proc
-    ->(v) { v + value }
-  end
-end
-
-Add[1] >> Add[4] >> Add[6] # Add[11]
-```
-
 ## Built-In Types
 
 ### NullMonad
@@ -124,7 +102,7 @@ The `NullMonad` is a monad whose `>>` and `<<` operations have been overriden to
 NullMonad[0] >> ->(v) { v + 1 } # Consequence::NullMonad[0]
 ```
 
-This is different from the `<<` operation, because the proc isn't even run, so can cause no side effects:
+This is different from the `<<` operation, because the argument's `#call` method isn't even run, so can cause no side effects:
 
 ``` ruby
 NullMonad[0] << ->(v) { @side_effect = v + 1 }
@@ -156,7 +134,7 @@ Success[0] >> ->(v) { 5 / v }
 # Consequence::Failure[#<ZeroDivisionError: divided by 0>]
 ```
 
-A `Failure` monad is a subclass of the `NullMonad` so all successive chained procs are ignored.
+A `Failure` monad is a subclass of the `NullMonad` so all successive chained operations are ignored.
 
 Both `Success` and `Failure` respond to the `#succeeded?` and `#failed?` query methods in the way you'd expect:
 
@@ -177,7 +155,7 @@ A `Something` monad wraps up a nil result in a `Nothing` monad:
 Something[[1, 3, 5]] >> ->(v) { v[4] } # Consequence::Nothing[nil]
 ```
 
-A `Nothing` monad is also a subclass of the `NullMonad` so all successive chained procs are ignored. This prevents `MissingMethod` errors from trying to call a method on a `nil`.
+A `Nothing` monad is also a subclass of the `NullMonad` so all successive chained operations are ignored. This prevents `MissingMethod` errors from trying to call a method on a `nil`.
 
 A `Nothing` responds positively to the `#nil?` method:
 
@@ -209,6 +187,16 @@ Something[dangrous_hash][:user][:orders][1][:price] # Consequence::Something[3.9
 Something[dangrous_hash][:user][:orders][2][:price] # Consequence::Nothing[nil]
 ```
 
+## `#to_proc`
+
+Before either operation calls the argument's `#call` method, the `#to_proc` method is called on it if it has one. This can be useful if the operation is given an object that has no `#call` method, but has a `#to_proc`.
+
+A good example of this is the Symbol object, whose `#to_proc` method supplies a proc that sends the symbol as a message to its first argument. In this case this means calling that method on the value:
+
+``` ruby
+Foo[[1, 4, 7]] >> :pop # Foo[7]
+```
+
 ## Wiki
 
 To find some examples and information about utils, [check out the wiki](https://github.com/mushishi78/consequence/wiki) and feel free to contribute to it.
@@ -216,7 +204,6 @@ To find some examples and information about utils, [check out the wiki](https://
 ## Inspirations
 
 * [Deterministic](https://github.com/pzol/deterministic)
-* [Kleisli](https://github.com/txus/kleisli)
 * [Refactoring Ruby with Monads](https://www.youtube.com/watch?v=J1jYlPtkrqQ&feature=youtu.be&a)
 
 ## Installation
