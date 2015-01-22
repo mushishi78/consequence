@@ -11,7 +11,8 @@ module Consequence
     attr_reader :value
 
     def >>(proc)
-      wrap(bind(proc.to_proc))
+      proc = proc.to_proc if proc.respond_to?(:to_proc)
+      wrap(bind(proc))
     end
 
     def <<(proc)
