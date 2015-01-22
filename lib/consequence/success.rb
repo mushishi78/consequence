@@ -13,13 +13,7 @@ module Consequence
     rescue => err
       Failure[err]
     end
-
-    def succeeded?; true end
-    def failed?; false end
   end
 
-  class Failure < NullMonad
-    def succeeded?; false end
-    def failed?; true end
-  end
+  class Failure < NullMonad; end
 end

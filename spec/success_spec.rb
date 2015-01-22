@@ -26,23 +26,5 @@ module Consequence
         expect(Success[[1, 6]] << type_check).to eq(Success[[1, 6]])
       end
     end
-
-    describe '#succeeded?' do
-      it { expect(Success[0].succeeded?).to be(true) }
-    end
-
-    describe '#failed?' do
-      it { expect(Success[0].failed?).to be(false) }
-    end
-  end
-
-  describe Failure do
-    describe '#succeeded?' do
-      it { expect(Failure[0].succeeded?).to be(false) }
-    end
-
-    describe '#failed?' do
-      it { expect(Failure[0].failed?).to be(true) }
-    end
   end
 end

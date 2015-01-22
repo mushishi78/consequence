@@ -1,7 +1,19 @@
+require 'inflecto'
+
 module Consequence
   class Monad
-    def self.[](value)
-      new(value)
+    class << self
+      def [](value)
+        new(value)
+      end
+
+      def inherited(child)
+        return unless child.name
+        query_name = Inflecto.demodulize(child.name)
+        query_name = Inflecto.underscore(query_name)
+        query_name = "#{query_name}?".to_sym
+        define_method(query_name) { self.is_a?(child) }
+      end
     end
 
     def initialize(value)

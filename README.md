@@ -17,25 +17,32 @@ include Consequence
 my_monad = Monad[4]
 ```
 
-Its value can be retrieved with the `#value` getter method.
+Its value can be retrieved with the `#value` getter method:
 
 ``` ruby
 my_monad.value # 4
 ```
 
-To create new monad types, simply inherit from `Monad`.
+To create new monad types, simply inherit from `Monad`:
 
 ``` ruby
-Foo = Class.new(Monad)
-Bar = Class.new(Monad)
+class Foo < Monad; end
+class Bar < Monad; end
 ```
 
-A monad is equal to another monad only if both it's type and value are equal.
+A monad is equal to another monad only if both it's type and value are equal:
 
 ``` ruby
 Foo[0] == Foo[1] # false
 Foo[0] == Bar[0] # false
 Foo[0] == Foo[0] # true
+```
+
+A monad respond to query methods for all defined monads:
+
+``` ruby
+Foo[0].foo? # true
+Foo[0].bar? # false
 ```
 
 ### Operations
@@ -54,7 +61,7 @@ Foo[4] << ->(v) { puts v }
 It's second argument will be passed the monad itself. This is useful for making decisions based on the monads type.
 
 ``` ruby
-Foo[0] << ->(v, m) { puts v if m.is_a?(Foo) }
+Foo[0] << ->(v, m) { puts v if m.foo? }
 # $ 0
 ```
 
@@ -135,15 +142,6 @@ Success[0] >> ->(v) { 5 / v }
 ```
 
 A `Failure` monad is a subclass of the `NullMonad` so all successive chained operations are ignored.
-
-Both `Success` and `Failure` respond to the `#succeeded?` and `#failed?` query methods in the way you'd expect:
-
-``` ruby
-Success[0].succeeded? # true
-Success[0].failed? # false
-Failure[0].succeeded? # false
-Failure[0].failed? # true
-```
 
 For an example, check out the [Success & Failure example](https://github.com/mushishi78/consequence/wiki/Success-&-Failure-Example) on the wiki.
 

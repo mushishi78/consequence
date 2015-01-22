@@ -1,8 +1,13 @@
 module Consequence
   describe Monad do
-    before do
-      stub_const('Foo', Class.new(Monad))
-      stub_const('Bar', Class.new(Monad))
+    before(:all) do
+      class Foo < Monad; end
+      class Bar < Monad; end
+    end
+
+    after(:all) do
+      Consequence.send(:remove_const, :Foo)
+      Consequence.send(:remove_const, :Bar)
     end
 
     describe '#>>' do
@@ -33,7 +38,7 @@ module Consequence
     end
 
     describe '#<<' do
-      let(:react) { ->(v, m) { @side_effect = v**2 if m.is_a?(Bar) } }
+      let(:react) { ->(v, m) { @side_effect = v**2 if m.bar? } }
       let(:log)   { ->(v) { @side_effect = @side_effect.to_s } }
 
       it 'handles a Monad => _ proc' do
@@ -58,6 +63,17 @@ module Consequence
 
       context 'with other a different class' do
         it { expect(Foo[0] == Bar[0]).to be(false) }
+      end
+    end
+
+    describe 'query_method' do
+      it 'defines query methods' do
+        expect(Foo[0].foo?).to be(true)
+        expect(Foo[0].bar?).to be(false)
+        expect(Bar[0].foo?).to be(false)
+        expect(Bar[0].bar?).to be(true)
+        expect(Monad[0].foo?).to be(false)
+        expect(Monad[0].bar?).to be(false)
       end
     end
   end
